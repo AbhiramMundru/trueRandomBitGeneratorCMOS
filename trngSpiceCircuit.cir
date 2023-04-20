@@ -1,0 +1,80 @@
+***pro2 
+.subckt inv 1 2 3
+M1 3 1 2 2 pmod w=100u l=10u
+M2 3 1 0 0 nmod w=100u l=10u
+.model nmod nmos version=54 level=4.7
+.model pmod pmos version=54 level=4.7
+.ends
+
+.subckt nandd 1 2 3 4
+M1 4 1 3 3 pmod w=100u l=10u
+M2 4 2 3 3 pmod w=100u l=10u
+M3 4 1 5 5 nmod w=100u l=10u
+M4 5 2 0 0 nmod w=100u l=10u
+.model nmod nmos version=54 level=4.7
+.model pmod pmos version=54 level=4.7
+.ends
+
+.subckt dff 1 2 3 4 5
+M1 2 3 6 6 nmod w=100u l=10u
+M7 2 4 6 6 pmod w=100u l=10u
+M2 7 6 1 1 pmod w=100u l=10u
+M3 7 6 0 0 nmod w=100u l=10u
+M4 5 7 1 1 pmod w=100u l=10u
+M5 5 7 0 0 nmod w=100u l=10u
+M6 6 4 5 5 nmod w=100u l=10u
+M8 6 3 5 5 pmod w=100u l=10u
+.model nmod nmos version=54 level=4.7
+.model pmod pmos version=54 level=4.7
+.ends
+
+.subckt xorr 1 2 3 4 5 6
+M1 7 2 1 1 pmod w=100u l=10u
+M2 7 5 1 1 pmod w=100u l=10u
+M3 6 4 7 7 pmod w=100u l=10u
+M4 6 3 7 7 pmod w=100u l=10u
+M5 6 2 8 8 nmod w=100u l=10u
+M6 8 5 0 0 nmod w=100u l=10u
+M7 9 3 0 0 nmod w=100u l=10u
+M8 6 4 9 9 nmod w=100u l=10u
+.model nmod nmos version=54 level=4.7
+.model pmod pmos version=54 level=4.7
+.ends
+
+Vdd 1 0 5v
+Vclk 2 0 pulse (0 5 0 0 0 10m 20m)
+
+Xnand1 15 2 1 11 nandd 
+Xa 11 1 12 inv
+Xb 12 1 13 inv
+Xc 13 1 14 inv
+Xd 14 1 15 inv
+
+Xnand2 18 2 1 16 nandd
+Xe 16 1 17 inv
+Xf 17 1 18 inv
+
+Xnand3 25 2 1 19 nandd
+Xg 19 1 20 inv
+Xh 20 1 21 inv
+Xi 21 1 22 inv
+Xj 22 1 23 inv
+Xk 23 1 24 inv
+Xl 24 1 25 inv
+
+Xm 15 1 26 inv
+Xn 18 1 27 inv
+Xxorr 1 15 18 26 27 28 xorr
+
+Xclkbar 25 1 28 inv
+Xout 1 28 25 28 29 dff
+
+
+
+.tran 0.1m 30m
+.control 
+run
+plot V(2) 
+plot V(28)
+.endc
+.end
